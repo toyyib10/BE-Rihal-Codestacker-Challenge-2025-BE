@@ -25,7 +25,6 @@ const createAdminService = async (name, email, hashedPassword, phone_number, id)
     `;
     const values = [name, email, password, phone_number, id];
     const result = await pool.query(query, values);
-    console.log(result)
     return result.rows[0];
 }
 

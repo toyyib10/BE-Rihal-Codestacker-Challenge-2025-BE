@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const handleResponse = (res, status, message, data) => {
-    res.status(status).send({
+    return res.status(status).json({
         status,
         message,
         data,
@@ -25,9 +25,9 @@ const createAdmin = async (req, res, next) => {
     try{
         const id = await getAdminIdService();
         const newAdmin = await createAdminService(name, email, hashedPassword, phone_number, id);
-        console.log(newAdmin)
         handleResponse(res, 200, "Admin created successfully",newAdmin);
     } catch (error) {
+        console.log(error.message);
         next(error)
     }
 }
