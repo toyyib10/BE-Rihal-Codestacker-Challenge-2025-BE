@@ -10,8 +10,7 @@ const createUserTable = async () => {
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            phone_number TEXT,
-            serial_number INT DEFAULT nextval('admin_id_seq') UNIQUE
+            phone_number TEXT
         )
     `;
 

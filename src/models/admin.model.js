@@ -6,21 +6,26 @@ const getAllUserService = async () => {
     
 };
 
-const getSerialService = async () => {
-    const serialQuery = `SELECT nextval('admin_id_seq') AS next_serial`;
-    const result = await pool.query(serialQuery);
-    const nextSerial = result.rows[0].next_serial;
-    const id = `A${String(nextSerial).padStart(3, "0")}`;
-    return {id, nextSerial};
+const getAdminIdService = async () => {
+    const result = await pool.query("SELECT id FROM admins ORDER BY id DESC LIMIT 1;");
+
+    if (result.rows.length === 0) {
+        return "A001";
+    }
+
+    const lastId = result.rows[0].id;
+    const numberPart = parseInt(lastId.substring(1)) + 1;
+    return `A${String(numberPart).padStart(3, "0")}`;
 } 
 
-const createAdminService = async (name, email, hashedPassword, phone_number, id, nextSerial) => {
+const createAdminService = async (name, email, hashedPassword, phone_number, id) => {
     const password = hashedPassword;
     const query = `
-        INSERT INTO admins (name, email, password, phone_number, id, serial_number) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, phone_number, serial_number
+        INSERT INTO admins (name, email, password, phone_number, id) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, phone_number
     `;
-    const values = [name, email, password, phone_number, id, nextSerial];
+    const values = [name, email, password, phone_number, id];
     const result = await pool.query(query, values);
+    console.log(result)
     return result.rows[0];
 }
 
@@ -29,4 +34,4 @@ const verifyAdminService = async (email, password) => {
     return result.rows[0];
 }
 
-module.exports = {getAllUserService, createAdminService, verifyAdminService, getSerialService}
+module.exports = {getAllUserService, createAdminService, verifyAdminService, getAdminIdService}
